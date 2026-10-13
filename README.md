@@ -44,24 +44,29 @@ A Windows tool for opening PS3 PKG files, browsing their contents, and extractin
 ## Project structure
 
 ```
-PackageViewer/
-├── Extensions/
-│   └── StreamExtensions.cs   … Big-endian read/write helpers (Stream extension methods)
-├── IO/
-│   ├── Decoder.cs            … PKG decryption (header and item table, AES-CTR / Debug keystream)
-│   ├── FileEntry.cs          … A single entry in the item table (ItemRecord + decrypted file name)
-│   ├── FileType.cs           … File type (EBOOT / SELF / Directory / Image, etc.)
-│   ├── ItemRecord.cs         … PKG_ITEM_RECORD (0x20 bytes)
-│   ├── PackageConstants.cs   … PKG format constants (signature, etc.)
-│   ├── PackageHeader.cs      … Read/write the PKG header (0xC0 bytes)
-│   └── Unpacker.cs           … Extraction to disk
-├── Package.cs                … Decrypted package information
-├── RuntimeHelpers.cs         … Application-wide helpers (app name, error dialog)
-├── frmMain.cs                … Main window
-└── frmAbout.cs               … About window
-Resources/
-├── appicon.ico
-└── icon/                     … Icons for the file list
+.
+├── PackageViewer.slnx              … Solution file
+├── src/
+│   └── PackageViewer/
+│       ├── PackageViewer.csproj
+│       ├── Extensions/
+│       │   └── StreamExtensions.cs … Big-endian read/write helpers (Stream extension methods)
+│       ├── IO/
+│       │   ├── Decoder.cs          … PKG decryption (header and item table, AES-CTR / Debug keystream, signature)
+│       │   ├── FileEntry.cs        … A single entry in the item table (ItemRecord + decrypted file name)
+│       │   ├── FileType.cs         … File type (EBOOT / SELF / Directory / Image, etc.)
+│       │   ├── ItemRecord.cs       … PKG_ITEM_RECORD (0x20 bytes)
+│       │   ├── PackageHeader.cs    … Read/write the PKG header (0xC0 bytes)
+│       │   └── Unpacker.cs         … Extraction to disk
+│       ├── Package.cs              … Decrypted package information
+│       ├── RuntimeHelpers.cs       … Application-wide helpers (app name, error dialog)
+│       ├── frmMain.cs              … Main window
+│       └── frmAbout.cs             … About window
+├── resources/
+│   ├── appicon.ico
+│   └── icon/                       … Icons for the file list
+└── docs/
+    └── main.png                    … Screenshot
 ```
 
 ## PKG structure (overview)

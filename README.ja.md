@@ -44,24 +44,29 @@ PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う W
 ## プロジェクト構成
 
 ```
-PackageViewer/
-├── Extensions/
-│   └── StreamExtensions.cs   … ビッグエンディアンの読み書き（Stream 拡張メソッド）
-├── IO/
-│   ├── Decoder.cs            … PKG の復号（ヘッダー・アイテム表の解読、AES-CTR / Debug キーストリーム）
-│   ├── FileEntry.cs          … アイテム表の 1 件（ItemRecord + 復号したファイル名）
-│   ├── FileType.cs           … ファイルの種類（EBOOT / SELF / Directory / Image など）
-│   ├── ItemRecord.cs         … PKG_ITEM_RECORD（0x20 バイト）
-│   ├── PackageConstants.cs   … PKG 形式の定数（シグネチャなど）
-│   ├── PackageHeader.cs      … PKG ヘッダー（0xC0 バイト）の読み書き
-│   └── Unpacker.cs           … ディスクへの抽出
-├── Package.cs                … 解読したパッケージの情報
-├── RuntimeHelpers.cs         … アプリ全体で使う補助（アプリ名、エラーダイアログ）
-├── frmMain.cs                … メイン画面
-└── frmAbout.cs               … バージョン情報
-Resources/
-├── appicon.ico
-└── icon/                     … ファイル一覧のアイコン
+.
+├── PackageViewer.slnx              … ソリューションファイル
+├── src/
+│   └── PackageViewer/
+│       ├── PackageViewer.csproj
+│       ├── Extensions/
+│       │   └── StreamExtensions.cs … ビッグエンディアンの読み書き（Stream 拡張メソッド）
+│       ├── IO/
+│       │   ├── Decoder.cs          … PKG の復号（ヘッダー・アイテム表の解読、AES-CTR / Debug キーストリーム、シグネチャ）
+│       │   ├── FileEntry.cs        … アイテム表の 1 件（ItemRecord + 復号したファイル名）
+│       │   ├── FileType.cs         … ファイルの種類（EBOOT / SELF / Directory / Image など）
+│       │   ├── ItemRecord.cs       … PKG_ITEM_RECORD（0x20 バイト）
+│       │   ├── PackageHeader.cs    … PKG ヘッダー（0xC0 バイト）の読み書き
+│       │   └── Unpacker.cs         … ディスクへの抽出
+│       ├── Package.cs              … 解読したパッケージの情報
+│       ├── RuntimeHelpers.cs       … アプリ全体で使う補助（アプリ名、エラーダイアログ）
+│       ├── frmMain.cs              … メイン画面
+│       └── frmAbout.cs             … バージョン情報
+├── resources/
+│   ├── appicon.ico
+│   └── icon/                       … ファイル一覧のアイコン
+└── docs/
+    └── main.png                    … スクリーンショット
 ```
 
 ## PKG の構造（概要）
