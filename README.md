@@ -6,6 +6,8 @@ A PS3 Package Viewer and Extraction
 
 A Windows tool for opening PS3 PKG files, browsing their contents, and extracting them.
 
+![PS3 Package Viewer](docs/main.png)
+
 > [!NOTE]
 > This tool only decrypts the outer encryption (AES-128-CTR) applied to the whole PKG.
 > Extracted `EBOOT.BIN` and `*.self` files remain NPDRM SELF (encrypted executables).

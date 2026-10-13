@@ -6,6 +6,8 @@ A PS3 Package Viewer and Extraction
 
 PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う Windows 用ツールです。
 
+![PS3 Package Viewer](docs/main.png)
+
 > [!NOTE]
 > このツールが復号するのは、PKG 全体にかかっている外側の暗号（AES-128-CTR）だけです。
 > 取り出した `EBOOT.BIN` や `*.self` は NPDRM SELF のまま（暗号化された実行ファイル）です。
