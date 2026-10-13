@@ -1,6 +1,6 @@
 ## Commit Message Rules
 
-- Always write commit messages in English.
+- Always write commit messages in English, following Conventional Commits. Never use Japanese.
 - Generate the entire commit message (subject, body, and footer) in English, regardless of the language used in the chat or the code comments.
 - Follow the Conventional Commits specification: `<type>(<scope>): <description>`
 - Allowed types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert

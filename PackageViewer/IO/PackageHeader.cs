@@ -21,7 +21,7 @@ public class PackageHeader {
   /// <remarks>
   /// <c>Offset: 0x00, Size: 0x04</c>
   /// </remarks>
-  public uint magic = PackageConstants.SIGNATURE;
+  public uint magic = Decoder.SIGNATURE;
 
   /// <summary>
   /// 80 00 for finalized (retail), 00 00 for non finalized (debug)

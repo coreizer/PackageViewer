@@ -9,6 +9,11 @@ namespace PackageViewer.IO;
 /// Note: EBOOT.BIN / *.self etc. remain NPDRM SELF (only the PKG layer is decrypted).
 /// </summary>
 public sealed class Decoder : IDisposable {
+  /// <summary>
+  /// PKG file signature "\x7FPKG" (first 4 bytes of the header, big endian)
+  /// </summary>
+  public const uint SIGNATURE = 0x7F504B47;
+
   private static readonly byte[] NPDRM_PKG_PS3_AES_KEY = [
     0x2E, 0x7B, 0x71, 0xD7, 0xC9, 0xC9, 0xA1, 0x4E,
     0xA3, 0x22, 0x1F, 0x18, 0x88, 0x28, 0xB8, 0xF8
@@ -60,7 +65,7 @@ public sealed class Decoder : IDisposable {
       var header = new PackageHeader();
       stream.Seek(0, SeekOrigin.Begin);
       header.Read(stream);
-      if (header.magic != PackageConstants.SIGNATURE)
+      if (header.magic != SIGNATURE)
         throw new InvalidDataException("Not a PKG file (signature mismatch).");
       if (header.pkg_type != 0x0001)
         throw new NotSupportedException($"Only PS3 PKG files are supported (type: 0x{header.pkg_type:X4}).");
