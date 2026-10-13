@@ -74,8 +74,9 @@ partial class frmMain {
     // fileToolStripMenuItem
     // 
     this.fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { this.toolStripMenuItem, this.openToolStripMenuItem, this.file1ToolStripSeparator, this.closeToolStripMenuItem, this.file2ToolStripSeparator, this.saveAsToolStripMenuItem, this.file3ToolStripSeparator, this.exitToolStripMenuItem });
+    this.fileToolStripMenuItem.Image = Properties.Resources.folder;
     this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-    this.fileToolStripMenuItem.Size = new Size(37, 20);
+    this.fileToolStripMenuItem.Size = new Size(53, 20);
     this.fileToolStripMenuItem.Text = "File";
     // 
     // toolStripMenuItem
@@ -133,12 +134,14 @@ partial class frmMain {
     // toolsToolStripMenuItem
     // 
     this.toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { this.extractionToolStripMenuItem });
+    this.toolsToolStripMenuItem.Image = Properties.Resources.chip;
     this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-    this.toolsToolStripMenuItem.Size = new Size(46, 20);
+    this.toolsToolStripMenuItem.Size = new Size(62, 20);
     this.toolsToolStripMenuItem.Text = "Tools";
     // 
     // extractionToolStripMenuItem
     // 
+    this.extractionToolStripMenuItem.Image = Properties.Resources.drive_search;
     this.extractionToolStripMenuItem.Name = "extractionToolStripMenuItem";
     this.extractionToolStripMenuItem.Size = new Size(180, 22);
     this.extractionToolStripMenuItem.Text = "Extraction";
@@ -147,8 +150,9 @@ partial class frmMain {
     // helpToolStripMenuItem
     // 
     this.helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { this.aboutToolStripMenuItem });
+    this.helpToolStripMenuItem.Image = Properties.Resources.info;
     this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-    this.helpToolStripMenuItem.Size = new Size(44, 20);
+    this.helpToolStripMenuItem.Size = new Size(60, 20);
     this.helpToolStripMenuItem.Text = "Help";
     // 
     // aboutToolStripMenuItem
@@ -194,11 +198,11 @@ partial class frmMain {
     // 
     this.folderTreeView.Dock = DockStyle.Fill;
     this.folderTreeView.HideSelection = false;
-    this.folderTreeView.ImageIndex = 3;
+    this.folderTreeView.ImageIndex = 6;
     this.folderTreeView.ImageList = this.iconImageList;
     this.folderTreeView.Location = new Point(0, 0);
     this.folderTreeView.Name = "folderTreeView";
-    this.folderTreeView.SelectedImageIndex = 4;
+    this.folderTreeView.SelectedImageIndex = 7;
     this.folderTreeView.Size = new Size(318, 483);
     this.folderTreeView.TabIndex = 0;
     this.folderTreeView.AfterSelect += this.FolderTreeView_AfterSelect;
@@ -208,12 +212,16 @@ partial class frmMain {
     this.iconImageList.ColorDepth = ColorDepth.Depth32Bit;
     this.iconImageList.ImageStream = (ImageListStreamer)resources.GetObject("iconImageList.ImageStream");
     this.iconImageList.TransparentColor = Color.Transparent;
-    this.iconImageList.Images.SetKeyName(0, "data.ico");
-    this.iconImageList.Images.SetKeyName(1, "error.ico");
-    this.iconImageList.Images.SetKeyName(2, "file.ico");
-    this.iconImageList.Images.SetKeyName(3, "folder_close.ico");
-    this.iconImageList.Images.SetKeyName(4, "folder_open.ico");
-    this.iconImageList.Images.SetKeyName(5, "images.ico");
+    this.iconImageList.Images.SetKeyName(0, "chip.ico");
+    this.iconImageList.Images.SetKeyName(1, "data.ico");
+    this.iconImageList.Images.SetKeyName(2, "error.ico");
+    this.iconImageList.Images.SetKeyName(3, "extraction.ico");
+    this.iconImageList.Images.SetKeyName(4, "file.ico");
+    this.iconImageList.Images.SetKeyName(5, "folder.ico");
+    this.iconImageList.Images.SetKeyName(6, "folder_close.ico");
+    this.iconImageList.Images.SetKeyName(7, "folder_open.ico");
+    this.iconImageList.Images.SetKeyName(8, "images.ico");
+    this.iconImageList.Images.SetKeyName(9, "info.ico");
     // 
     // fileListView
     // 
@@ -262,13 +270,14 @@ partial class frmMain {
     // 
     this.contextMenuStrip.Items.AddRange(new ToolStripItem[] { this.toolStripMenuItemExtract });
     this.contextMenuStrip.Name = "contextMenuStrip1";
-    this.contextMenuStrip.Size = new Size(120, 26);
+    this.contextMenuStrip.Size = new Size(181, 48);
     this.contextMenuStrip.Opening += this.ContextMenuStrip_Opening;
     // 
     // toolStripMenuItemExtract
     // 
+    this.toolStripMenuItemExtract.Image = Properties.Resources.extraction;
     this.toolStripMenuItemExtract.Name = "toolStripMenuItemExtract";
-    this.toolStripMenuItemExtract.Size = new Size(119, 22);
+    this.toolStripMenuItemExtract.Size = new Size(180, 22);
     this.toolStripMenuItemExtract.Text = "Extract...";
     this.toolStripMenuItemExtract.Click += this.ExtractToolStripMenuItem_Click;
     // 
