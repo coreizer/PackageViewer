@@ -20,7 +20,7 @@ public partial class frmMain : Form {
 
   private void FolderTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
     try {
-      if (this._package == null) throw new InvalidOperationException("パッケージが開かれていません。");
+      if (this._package == null) throw new InvalidOperationException("No package is open.");
 
       this.fileListView.BeginUpdate();
       this.fileListView.Items.Clear();
@@ -44,7 +44,7 @@ public partial class frmMain : Form {
       this.fileListView.EndUpdate();
     }
     catch (Exception ex) {
-      RuntimeHelpers.ShowError(this, "フォルダの内容を表示できませんでした。", ex);
+      RuntimeHelpers.ShowError(this, "Failed to display the folder contents.", ex);
     }
   }
 
@@ -70,7 +70,7 @@ public partial class frmMain : Form {
     if (this._package == null) return;
 
     using var FBD = new FolderBrowserDialog() {
-      Description = "展開先フォルダを選択してください",
+      Description = "Select the output folder",
       UseDescriptionForTitle = true,
     };
     if (FBD.ShowDialog() != DialogResult.OK) return;
@@ -91,7 +91,7 @@ public partial class frmMain : Form {
 
     if (item.IsDirectory) {
       using var FBD = new FolderBrowserDialog() {
-        Description = $"「{item.FileName}」の展開先フォルダを選択してください",
+        Description = $"Select the output folder for \"{item.FileName}\"",
         UseDescriptionForTitle = true,
       };
       if (FBD.ShowDialog() != DialogResult.OK) return;
@@ -120,7 +120,7 @@ public partial class frmMain : Form {
       frm.ShowDialog();
     }
     catch (Exception ex) {
-      RuntimeHelpers.ShowError(this, "エラー", ex);
+      RuntimeHelpers.ShowError(this, "Error", ex);
     }
   }
 
@@ -138,20 +138,20 @@ public partial class frmMain : Form {
         this._package = Decoder.Open(OFD.FileName);
       }
       catch (Exception ex) {
-        RuntimeHelpers.ShowError(this, "パッケージを開けませんでした。", ex);
+        RuntimeHelpers.ShowError(this, "Failed to open the package.", ex);
         return;
       }
 
       var p = this._package;
       this.Text = $"{RuntimeHelpers.ApplicationName} - {Path.GetFileName(OFD.FileName)}";
       this.toolStripStatusLabel.Text =
-        $"{p.ContentId}  |  {(p.IsRetail ? "Retail" : "Debug")}  |  {p.Files.Count} 項目  |  {ByteSize.FromBytes(p.TotalSize).ToString()}";
+        $"{p.ContentId}  |  {(p.IsRetail ? "Retail" : "Debug")}  |  {p.Files.Count} items  |  {ByteSize.FromBytes(p.TotalSize).ToString()}";
 
       this.BuildTree();
       this.UpdateMenuState();
     }
     catch (Exception ex) {
-      RuntimeHelpers.ShowError(this, "パッケージを開けませんでした。", ex);
+      RuntimeHelpers.ShowError(this, "Failed to open the package.", ex);
     }
   }
 
@@ -223,7 +223,7 @@ public partial class frmMain : Form {
 
     var progress = new Progress<(long done, long total, string name)>(p => {
       var pct = p.total == 0 ? 100 : p.done * 100 / p.total;
-      this.toolStripStatusLabel.Text = $"展開中 {pct}% : {p.name}";
+      this.toolStripStatusLabel.Text = $"Extracting {pct}% : {p.name}";
     });
 
     try {
@@ -232,7 +232,7 @@ public partial class frmMain : Form {
 
       TaskDialog.ShowDialog(this, new TaskDialogPage() {
         Caption = RuntimeHelpers.ApplicationName,
-        Heading = "展開が完了しました",
+        Heading = "Extraction completed",
         Text = output,
         Icon = TaskDialogIcon.Information,
         Buttons = { TaskDialogButton.OK },
@@ -243,7 +243,7 @@ public partial class frmMain : Form {
     }
     catch (Exception ex) {
       this.toolStripStatusLabel.Text = status;
-      RuntimeHelpers.ShowError(this, "展開に失敗しました。", ex);
+      RuntimeHelpers.ShowError(this, "Extraction failed.", ex);
     }
     finally {
       this.menuStrip.Enabled = true;

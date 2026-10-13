@@ -26,8 +26,8 @@ public static class RuntimeHelpers {
       Buttons = { TaskDialogButton.OK },
       Expander = new TaskDialogExpander() {
         Text = ex.ToString(),
-        CollapsedButtonText = "詳細を表示",
-        ExpandedButtonText = "詳細を隠す",
+        CollapsedButtonText = "Show details",
+        ExpandedButtonText = "Hide details",
       },
     };
 

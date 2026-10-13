@@ -61,9 +61,9 @@ public sealed class Decoder : IDisposable {
       stream.Seek(0, SeekOrigin.Begin);
       header.Read(stream);
       if (header.magic != PackageConstants.SIGNATURE)
-        throw new InvalidDataException("PKG ファイルではありません（マジックが一致しません）。");
+        throw new InvalidDataException("Not a PKG file (signature mismatch).");
       if (header.pkg_type != 0x0001)
-        throw new NotSupportedException($"PS3 以外の PKG（Type=0x{header.pkg_type:X4}）には対応していません。");
+        throw new NotSupportedException($"Only PS3 PKG files are supported (type: 0x{header.pkg_type:X4}).");
 
       decoder = new Decoder(stream, header);
       var items = decoder.ReadItems((int)header.item_count);
@@ -124,7 +124,7 @@ public sealed class Decoder : IDisposable {
   /// </summary>
   public void ReadDecrypted(ulong relativeOffset, Span<byte> destination) {
     if (relativeOffset + (ulong)destination.Length > this._dataSize)
-      throw new InvalidDataException("データ領域の範囲外を読み込もうとしました。PKG が壊れている可能性があります。");
+      throw new InvalidDataException("Attempted to read outside the data area. The PKG may be corrupted.");
 
     var skip = (int)(relativeOffset % 16);
     var alignedOffset = relativeOffset - (ulong)skip;

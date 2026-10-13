@@ -31,7 +31,7 @@ public sealed class Unpacker(Package package) {
   /// </summary>
   public void ExtractFile(FileEntry item, string destinationPath, IProgress<(long done, long total, string name)>? progress = null, CancellationToken token = default) {
     if (item.IsDirectory)
-      throw new ArgumentException("フォルダは ExtractFolder を使用してください。", nameof(item));
+      throw new ArgumentException("Use ExtractFolder for folders.", nameof(item));
 
     var total = (long)item.DataSize;
     long done = 0;
@@ -50,7 +50,7 @@ public sealed class Unpacker(Package package) {
   /// </summary>
   public string ExtractFolder(FileEntry folder, string outputRoot, IProgress<(long done, long total, string name)>? progress = null, CancellationToken token = default) {
     if (!folder.IsDirectory)
-      throw new ArgumentException("ファイルは ExtractFile を使用してください。", nameof(folder));
+      throw new ArgumentException("Use ExtractFile for files.", nameof(folder));
 
     var folderName = folder.Name.Replace('\\', '/').Trim('/');
     var parent = folderName.Contains('/') ? folderName[..(folderName.LastIndexOf('/') + 1)] : "";
@@ -106,7 +106,7 @@ public sealed class Unpacker(Package package) {
     var full = Path.GetFullPath(Path.Combine(root, relative.Replace('/', Path.DirectorySeparatorChar)));
     var rootFull = Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
     if (!full.StartsWith(rootFull, StringComparison.OrdinalIgnoreCase))
-      throw new InvalidDataException($"不正なパスが含まれています: {relative}");
+      throw new InvalidDataException($"Invalid path: {relative}");
     return full;
   }
 }

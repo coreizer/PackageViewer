@@ -49,7 +49,7 @@ public sealed class Package : IDisposable {
   /// Decrypts the item and returns its contents
   /// </summary>
   public byte[] ReadItem(FileEntry item) {
-    if (item.DataSize > int.MaxValue) throw new IOException("ファイルが大きすぎます");
+    if (item.DataSize > int.MaxValue) throw new IOException("The file is too large.");
     using var ms = new MemoryStream((int)item.DataSize);
     this.CopyItemTo(item, ms);
     return ms.ToArray();
