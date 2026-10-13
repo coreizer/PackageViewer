@@ -1,93 +1,97 @@
 # PS3 Package Viewer
 
-PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う Windows 用ツールです。
+A PS3 Package Viewer and Extraction
+
+**English** | [日本語](README.ja.md)
+
+A Windows tool for opening PS3 PKG files, browsing their contents, and extracting them.
 
 > [!NOTE]
-> このツールが復号するのは、PKG 全体にかかっている外側の暗号（AES-128-CTR）だけです。
-> 取り出した `EBOOT.BIN` や `*.self` は NPDRM SELF のまま（暗号化された実行ファイル）です。
+> This tool only decrypts the outer encryption (AES-128-CTR) applied to the whole PKG.
+> Extracted `EBOOT.BIN` and `*.self` files remain NPDRM SELF (encrypted executables).
 
-## 主な機能
+## Features
 
-- PKG ファイルを開き、フォルダツリーとファイル一覧を表示
-  - Name / Size / Type / Offset / Flag を一覧表示
-  - ファイルの種類に応じたアイコン表示
-  - フォルダのダブルクリック（または Enter）でその階層へ移動
-- PKG 全体の抽出（`Tools → Extraction`）
-- ファイル一覧の右クリックから、ファイル／フォルダ単体の抽出
-- 抽出中の進捗をステータスバーに表示
+- Open a PKG file and browse its folder tree and file list
+  - Shows Name / Size / Type / Offset / Flag
+  - Icons based on the file type
+  - Double-click (or press Enter on) a folder to open it
+- Extract the whole PKG (`Tools → Extraction`)
+- Extract a single file or folder from the file list's context menu
+- Extraction progress is shown in the status bar
 
-### 対応している PKG
+### Supported PKG
 
-| 種類 | revision | 状態 |
+| Type | revision | Status |
 |---|---|---|
-| PS3 Retail（Finalized） | `0x8000` | 対応 |
-| PS3 Debug（Non-finalized） | `0x0000` | 実装済み・未検証 |
-| PSP / PS Vita | — | 未対応 |
+| PS3 Retail (Finalized) | `0x8000` | Supported |
+| PS3 Debug (Non-finalized) | `0x0000` | Implemented, not yet verified |
+| PSP / PS Vita | — | Not supported |
 
-## 動作環境
+## Requirements
 
 - Windows 10 / 11
-- [.NET 10](https://dotnet.microsoft.com/)（Windows Desktop Runtime）
+- [.NET 10](https://dotnet.microsoft.com/) (Windows Desktop Runtime)
 
-## ビルド
+## Build
 
-1. Visual Studio で `PackageViewer.slnx` を開く
-2. NuGet パッケージを復元する（ビルド時に自動で復元されます）
-3. ビルドして実行する
+1. Open `PackageViewer.slnx` in Visual Studio
+2. Restore NuGet packages (restored automatically on build)
+3. Build and run
 
-## プロジェクト構成
+## Project structure
 
 ```
 PackageViewer/
 ├── Extensions/
-│   └── StreamExtensions.cs   … ビッグエンディアンの読み書き（Stream 拡張メソッド）
+│   └── StreamExtensions.cs   … Big-endian read/write helpers (Stream extension methods)
 ├── IO/
-│   ├── Decoder.cs            … PKG の復号（ヘッダー・アイテム表の解読、AES-CTR / Debug キーストリーム）
-│   ├── FileEntry.cs          … アイテム表の 1 件（ItemRecord + 復号したファイル名）
-│   ├── FileType.cs           … ファイルの種類（EBOOT / SELF / Directory / Image など）
-│   ├── ItemRecord.cs         … PKG_ITEM_RECORD（0x20 バイト）
-│   ├── PackageConstants.cs   … PKG 形式の定数（シグネチャなど）
-│   ├── PackageHeader.cs      … PKG ヘッダー（0xC0 バイト）の読み書き
-│   └── Unpacker.cs           … ディスクへの抽出
-├── Package.cs                … 解読したパッケージの情報
-├── RuntimeHelpers.cs         … アプリ全体で使う補助（アプリ名、エラーダイアログ）
-├── frmMain.cs                … メイン画面
-└── frmAbout.cs               … バージョン情報
+│   ├── Decoder.cs            … PKG decryption (header and item table, AES-CTR / Debug keystream)
+│   ├── FileEntry.cs          … A single entry in the item table (ItemRecord + decrypted file name)
+│   ├── FileType.cs           … File type (EBOOT / SELF / Directory / Image, etc.)
+│   ├── ItemRecord.cs         … PKG_ITEM_RECORD (0x20 bytes)
+│   ├── PackageConstants.cs   … PKG format constants (signature, etc.)
+│   ├── PackageHeader.cs      … Read/write the PKG header (0xC0 bytes)
+│   └── Unpacker.cs           … Extraction to disk
+├── Package.cs                … Decrypted package information
+├── RuntimeHelpers.cs         … Application-wide helpers (app name, error dialog)
+├── frmMain.cs                … Main window
+└── frmAbout.cs               … About window
 Resources/
 ├── appicon.ico
-└── icon/                     … ファイル一覧のアイコン
+└── icon/                     … Icons for the file list
 ```
 
-## PKG の構造（概要）
+## PKG structure (overview)
 
-| 範囲 | 内容 |
+| Range | Contents |
 |---|---|
-| `0x000`〜`0x0BF` | ヘッダー（マジック `\x7FPKG`、revision、type、データ位置、Content ID、IV など） |
-| `0x0C0`〜 | メタデータ（DRM の種類、コンテンツの種類など） |
-| `data_offset`〜 | 暗号化されたデータ領域（アイテム表 → ファイル名 → ファイルの中身） |
-| 末尾 `0x20` バイト | ファイル全体の SHA-1 |
+| `0x000`–`0x0BF` | Header (magic `\x7FPKG`, revision, type, data location, Content ID, IV, etc.) |
+| `0x0C0`– | Metadata (DRM type, content type, etc.) |
+| `data_offset`– | Encrypted data area (item table → file names → file data) |
+| Last `0x20` bytes | SHA-1 of the whole file |
 
-- すべての値はビッグエンディアンです。
-- Retail の PKG は、`AES-128-ECB(NPDRM PKG PS3 AES key, pkg_data_riv + ブロック番号)` をキーストリームとする AES-CTR で暗号化されています。
-- 詳細は [PS3 Developer Wiki – PKG files](https://www.psdevwiki.com/ps3/PKG_files) を参照してください。
+- All values are big-endian.
+- Retail PKGs are encrypted with AES-CTR, using `AES-128-ECB(NPDRM PKG PS3 AES key, pkg_data_riv + block index)` as the keystream.
+- See [PS3 Developer Wiki – PKG files](https://www.psdevwiki.com/ps3/PKG_files) for details.
 
-## 今後の予定
+## Roadmap
 
-- [ ] PKG の新規作成（CFW 向け Debug 形式）
-- [ ] 開いた PKG のファイル差し替え
+- [ ] Create new PKGs (Debug format for CFW)
+- [ ] Replace files in an opened PKG
 
-## クレジット
+## Credits
 
 - **[PS3 Developer Wiki](https://www.psdevwiki.com/ps3/)**
-  - [PKG files](https://www.psdevwiki.com/ps3/PKG_files) — PKG のヘッダー、アイテムレコード、メタデータ、暗号化方式の仕様
-- **[ByteSize](https://github.com/omar/ByteSize)**（ByteSizeLib） by Omar Khudeira — MIT License
-  - ファイルサイズの表示に使用
+  - [PKG files](https://www.psdevwiki.com/ps3/PKG_files) — Specification of the PKG header, item records, metadata and encryption
+- **[ByteSize](https://github.com/omar/ByteSize)** (ByteSizeLib) by Omar Khudeira — MIT License
+  - Used for displaying file sizes
 
-## ライセンス
+## License
 
 [MIT License](LICENSE)
 
-本ソフトウェアは無保証です。使用によって生じたいかなる損害についても、作者は責任を負いません。
+This software is provided "as is", without warranty of any kind. The author is not liable for any damages arising from its use.
 
 ---
 
