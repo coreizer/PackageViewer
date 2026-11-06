@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PackageViewer.Views.AboutWindow"
+        Icon="/Assets/appicon.ico"
+        Title="About"
+        Width="320"
+        Height="200"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+
+  <DockPanel Margin="16">
+    <Button DockPanel.Dock="Bottom"
+            Content="OK"
+            MinWidth="80"
+            HorizontalAlignment="Right"
+            IsDefault="True"
+            IsCancel="True"
+            Click="OkButton_Click" />
+
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="6">
+      <Image Source="/Assets/appicon.png" Width="48" Height="48" Margin="0,0,0,6" />
+      <TextBlock Text="Package Viewer" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" />
+      <TextBlock x:Name="versionText" Text="Version 1.0.0" HorizontalAlignment="Center" />
+      <TextBlock Text="© 2026 coreizer" FontSize="12" Opacity="0.7" HorizontalAlignment="Center" />
+    </StackPanel>
+  </DockPanel>
+</Window>
