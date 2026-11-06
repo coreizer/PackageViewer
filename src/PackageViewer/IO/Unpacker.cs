@@ -52,7 +52,18 @@ public sealed class Unpacker(Package package) {
     if (!folder.IsDirectory)
       throw new ArgumentException("Use ExtractFile for files.", nameof(folder));
 
-    var folderName = folder.Name.Replace('\\', '/').Trim('/');
+    return this.ExtractFolder(folder.Name, outputRoot, progress, token);
+  }
+
+  /// <summary>
+  /// Extracts everything under the folder path (e.g. "USRDIR/data") to outputRoot\&lt;FolderName&gt;\ and returns the output folder.
+  /// The folder does not need to have its own item in the package.
+  /// </summary>
+  public string ExtractFolder(string folderPath, string outputRoot, IProgress<(long done, long total, string name)>? progress = null, CancellationToken token = default) {
+    var folderName = folderPath.Replace('\\', '/').Trim('/');
+    if (folderName.Length == 0)
+      throw new ArgumentException("Use ExtractAll for the package root.", nameof(folderPath));
+
     var parent = folderName.Contains('/') ? folderName[..(folderName.LastIndexOf('/') + 1)] : "";
     var prefix = folderName + "/";
 

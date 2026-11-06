@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Platform.Storage;
+using Avalonia.VisualTree;
 using ByteSizeLib;
 using PackageViewer.IO;
 using PackageViewer.Models;
@@ -28,6 +29,10 @@ public partial class MainWindow : Window {
 
     // Enter on the file list opens a folder / extracts a file (tunnel so the DataGrid does not swallow the key)
     this.fileListView.AddHandler(KeyDownEvent, this.FileListView_KeyDown, RoutingStrategies.Tunnel);
+
+    // Right-click selects the row / folder under the pointer so the context menu acts on it
+    this.fileListView.AddHandler(PointerPressedEvent, this.FileListView_PointerPressed, RoutingStrategies.Tunnel);
+    this.folderTreeView.AddHandler(PointerPressedEvent, this.FolderTreeView_PointerPressed, RoutingStrategies.Tunnel);
 
     this.Closed += (_, _) => this.ClosePackage();
     this.UpdateMenuState();
@@ -53,6 +58,20 @@ public partial class MainWindow : Window {
     catch (Exception ex) {
       _ = RuntimeHelpers.ShowErrorAsync(this, "Failed to display the folder contents.", ex);
     }
+  }
+
+  private void FileListView_PointerPressed(object? sender, PointerPressedEventArgs e) {
+    if (!e.GetCurrentPoint(this.fileListView).Properties.IsRightButtonPressed) return;
+    if (e.Source is not Control c) return;
+    var row = c.FindAncestorOfType<DataGridRow>(includeSelf: true);
+    if (row?.DataContext is FileRow item) this.fileListView.SelectedItem = item;
+  }
+
+  private void FolderTreeView_PointerPressed(object? sender, PointerPressedEventArgs e) {
+    if (!e.GetCurrentPoint(this.folderTreeView).Properties.IsRightButtonPressed) return;
+    if (e.Source is not Control c) return;
+    var item = c.FindAncestorOfType<TreeViewItem>(includeSelf: true);
+    if (item?.DataContext is FolderNode node) this.folderTreeView.SelectedItem = node;
   }
 
   private void FileListView_DoubleTapped(object? sender, TappedEventArgs e) {
@@ -117,6 +136,27 @@ public partial class MainWindow : Window {
   private async void ExtractMenuItem_Click(object? sender, RoutedEventArgs e) {
     if (this.fileListView.SelectedItem is not FileRow row) return;
     await this.ExtractRowAsync(row);
+  }
+
+  /// <summary>
+  /// Extracts the folder right-clicked in the folder tree (the root extracts the whole package)
+  /// </summary>
+  private async void ExtractFolderMenuItem_Click(object? sender, RoutedEventArgs e) {
+    try {
+      if (this._package == null || this._extractCts != null) return;
+      if (this.folderTreeView.SelectedItem is not FolderNode node) return;
+
+      var outputRoot = await this.PickFolderAsync($"Select the output folder for \"{node.Name}\"");
+      if (outputRoot == null) return;
+
+      var unpacker = new Unpacker(this._package);
+      await this.RunExtractionAsync((progress, token) => node.Path.Length == 0
+        ? unpacker.ExtractAll(outputRoot, progress, token)
+        : unpacker.ExtractFolder(node.Path, outputRoot, progress, token));
+    }
+    catch (Exception ex) {
+      await RuntimeHelpers.ShowErrorAsync(this, "Extraction failed.", ex);
+    }
   }
 
   /// <summary>
@@ -207,6 +247,10 @@ public partial class MainWindow : Window {
 
   private void ContextMenu_Opening(object? sender, CancelEventArgs e) {
     e.Cancel = this._package == null || this._extractCts != null || this.fileListView.SelectedItem == null;
+  }
+
+  private void TreeContextMenu_Opening(object? sender, CancelEventArgs e) {
+    e.Cancel = this._package == null || this._extractCts != null || this.folderTreeView.SelectedItem == null;
   }
 
   private void ClosePackage() {

@@ -22,6 +22,7 @@ The UI is built with [Avalonia UI](https://avaloniaui.net/) (dark theme).
   - Double-click (or press Enter on) a file to extract it
 - Extract the whole PKG (`Tools → Extraction`)
 - Extract a single file or folder from the file list's context menu
+- Extract a folder and everything under it from the folder tree's context menu (the root extracts the whole PKG)
 - Extraction progress is shown in the status bar
 - Pass a `.pkg` path on the command line (or drop a file onto the executable) to open it at startup
 
