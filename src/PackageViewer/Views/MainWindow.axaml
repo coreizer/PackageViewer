@@ -1,0 +1,128 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:m="using:PackageViewer.Models"
+        x:Class="PackageViewer.Views.MainWindow"
+        Icon="/Assets/appicon.ico"
+        Title="PS3 Package Viewer - 1.0.0"
+        Width="960"
+        Height="560"
+        MinWidth="640"
+        MinHeight="360"
+        WindowStartupLocation="CenterScreen">
+
+  <DockPanel>
+    <!-- Menu bar -->
+    <Menu x:Name="mainMenu" DockPanel.Dock="Top">
+      <MenuItem>
+        <MenuItem.Header>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Image Classes="menuIcon" Source="/Assets/Icons/folder.png" />
+            <TextBlock Text="File" VerticalAlignment="Center" />
+          </StackPanel>
+        </MenuItem.Header>
+        <MenuItem Header="New" InputGesture="Ctrl+N" IsEnabled="False" />
+        <MenuItem x:Name="openMenuItem" Header="Open" InputGesture="Ctrl+O" HotKey="Ctrl+O" Click="OpenMenuItem_Click" />
+        <Separator />
+        <MenuItem x:Name="closeMenuItem" Header="Close" Click="CloseMenuItem_Click" />
+        <Separator />
+        <MenuItem Header="Save as" IsEnabled="False" />
+        <Separator />
+        <MenuItem Header="Exit" Click="ExitMenuItem_Click" />
+      </MenuItem>
+      <MenuItem>
+        <MenuItem.Header>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Image Classes="menuIcon" Source="/Assets/Icons/chip.png" />
+            <TextBlock Text="Tools" VerticalAlignment="Center" />
+          </StackPanel>
+        </MenuItem.Header>
+        <MenuItem x:Name="extractionMenuItem" Header="Extraction" Click="ExtractionMenuItem_Click">
+          <MenuItem.Icon>
+            <Image Classes="menuIcon" Source="/Assets/Icons/drive_search.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
+      <MenuItem>
+        <MenuItem.Header>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Image Classes="menuIcon" Source="/Assets/Icons/info.png" />
+            <TextBlock Text="Help" VerticalAlignment="Center" />
+          </StackPanel>
+        </MenuItem.Header>
+        <MenuItem Header="About" Click="AboutMenuItem_Click" />
+      </MenuItem>
+    </Menu>
+
+    <!-- Status bar -->
+    <Border Classes="statusBar" DockPanel.Dock="Bottom">
+      <TextBlock x:Name="statusText" Text="© 2026 coreizer" />
+    </Border>
+
+    <!-- Folder tree | file list -->
+    <Grid ColumnDefinitions="320,4,*">
+      <TreeView x:Name="folderTreeView"
+                Grid.Column="0"
+                SelectionChanged="FolderTreeView_SelectionChanged">
+        <TreeView.Styles>
+          <Style Selector="TreeViewItem">
+            <Setter Property="IsExpanded" Value="{ReflectionBinding IsExpanded, Mode=TwoWay}" />
+          </Style>
+        </TreeView.Styles>
+        <TreeView.ItemTemplate>
+          <TreeDataTemplate x:DataType="m:FolderNode" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal">
+              <Image Classes="listIcon" Source="{Binding Icon}" />
+              <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+            </StackPanel>
+          </TreeDataTemplate>
+        </TreeView.ItemTemplate>
+      </TreeView>
+
+      <GridSplitter Grid.Column="1" Background="{DynamicResource SystemControlBackgroundBaseLowBrush}" ResizeDirection="Columns" />
+
+      <DataGrid x:Name="fileListView"
+                Grid.Column="2"
+                x:DataType="m:FileRow"
+                IsReadOnly="True"
+                SelectionMode="Single"
+                GridLinesVisibility="None"
+                CanUserReorderColumns="False"
+                CanUserResizeColumns="True"
+                CanUserSortColumns="False"
+                HeadersVisibility="Column"
+                DoubleTapped="FileListView_DoubleTapped">
+        <DataGrid.ContextMenu>
+          <ContextMenu Opening="ContextMenu_Opening">
+            <MenuItem Header="Extract..." Click="ExtractMenuItem_Click">
+              <MenuItem.Icon>
+                <Image Classes="menuIcon" Source="/Assets/Icons/extraction.png" />
+              </MenuItem.Icon>
+            </MenuItem>
+          </ContextMenu>
+        </DataGrid.ContextMenu>
+        <DataGrid.Columns>
+          <DataGridTemplateColumn Header="Name" Width="240">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate x:DataType="m:FileRow">
+                <StackPanel Orientation="Horizontal" Margin="4,0">
+                  <Image Classes="listIcon" Source="{Binding Icon}" />
+                  <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTemplateColumn Header="Size" Width="110">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate x:DataType="m:FileRow">
+                <TextBlock Text="{Binding Size}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="4,0" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+          <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="90" />
+          <DataGridTextColumn Header="Offset" Binding="{Binding Offset}" Width="110" />
+          <DataGridTextColumn Header="Flag" Binding="{Binding Flag}" Width="*" MinWidth="100" />
+        </DataGrid.Columns>
+      </DataGrid>
+    </Grid>
+  </DockPanel>
+</Window>

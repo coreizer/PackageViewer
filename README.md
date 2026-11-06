@@ -4,7 +4,8 @@ A PS3 Package Viewer and Extraction
 
 **English** | [日本語](README.ja.md)
 
-A Windows tool for opening PS3 PKG files, browsing their contents, and extracting them.
+A desktop tool for opening PS3 PKG files, browsing their contents, and extracting them.
+The UI is built with [Avalonia UI](https://avaloniaui.net/) (dark theme).
 
 ![PS3 Package Viewer](docs/main.png)
 
@@ -21,6 +22,7 @@ A Windows tool for opening PS3 PKG files, browsing their contents, and extractin
 - Extract the whole PKG (`Tools → Extraction`)
 - Extract a single file or folder from the file list's context menu
 - Extraction progress is shown in the status bar
+- Pass a `.pkg` path on the command line (or drop a file onto the executable) to open it at startup
 
 ### Supported PKG
 
@@ -32,14 +34,20 @@ A Windows tool for opening PS3 PKG files, browsing their contents, and extractin
 
 ## Requirements
 
-- Windows 10 / 11
-- [.NET 10](https://dotnet.microsoft.com/) (Windows Desktop Runtime)
+- Windows 10 / 11 (Avalonia also runs on Linux / macOS, but only Windows has been tested)
+- [.NET 10](https://dotnet.microsoft.com/) Runtime
 
 ## Build
 
 1. Open `PackageViewer.slnx` in Visual Studio
 2. Restore NuGet packages (restored automatically on build)
 3. Build and run
+
+Or from the command line:
+
+```sh
+dotnet run --project src/PackageViewer
+```
 
 ## Project structure
 
@@ -49,6 +57,11 @@ A Windows tool for opening PS3 PKG files, browsing their contents, and extractin
 ├── src/
 │   └── PackageViewer/
 │       ├── PackageViewer.csproj
+│       ├── Program.cs              … Entry point (Avalonia app builder)
+│       ├── App.axaml               … Application (Fluent dark theme, global styles)
+│       ├── Assets/
+│       │   ├── appicon.ico
+│       │   └── Icons/              … PNG icons embedded as Avalonia resources
 │       ├── Extensions/
 │       │   └── StreamExtensions.cs … Big-endian read/write helpers (Stream extension methods)
 │       ├── IO/
@@ -59,12 +72,18 @@ A Windows tool for opening PS3 PKG files, browsing their contents, and extractin
 │       │   ├── PackageHeader.cs    … Read/write the PKG header (0xC0 bytes)
 │       │   └── Unpacker.cs         … Extraction to disk
 │       ├── Package.cs              … Decrypted package information
-│       ├── RuntimeHelpers.cs       … Application-wide helpers (app name, error dialog)
-│       ├── frmMain.cs              … Main window
-│       └── frmAbout.cs             … About window
+│       ├── RuntimeHelpers.cs       … Application-wide helpers (app name, version, dialogs)
+│       ├── Models/
+│       │   ├── FolderNode.cs       … A folder in the folder tree
+│       │   ├── FileRow.cs          … A row in the file list
+│       │   └── Icons.cs            … Icon loading / cache
+│       └── Views/
+│           ├── MainWindow.axaml    … Main window
+│           ├── AboutWindow.axaml   … About window
+│           └── MessageDialog.axaml … Information / error dialog
 ├── resources/
 │   ├── appicon.ico
-│   └── icon/                       … Icons for the file list
+│   └── icon/                       … Original ICO icons (converted to PNG under Assets/Icons)
 └── docs/
     └── main.png                    … Screenshot
 ```
@@ -91,6 +110,8 @@ A Windows tool for opening PS3 PKG files, browsing their contents, and extractin
 
 - **[PS3 Developer Wiki](https://www.psdevwiki.com/ps3/)**
   - [PKG files](https://www.psdevwiki.com/ps3/PKG_files) — Specification of the PKG header, item records, metadata and encryption
+- **[Avalonia UI](https://avaloniaui.net/)** — MIT License
+  - Cross-platform UI framework (Fluent theme, DataGrid)
 - **[ByteSize](https://github.com/omar/ByteSize)** (ByteSizeLib) by Omar Khudeira — MIT License
   - Used for displaying file sizes
 
