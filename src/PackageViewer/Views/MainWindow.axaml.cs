@@ -26,7 +26,7 @@ public partial class MainWindow : Window {
     this.folderTreeView.ItemsSource = this._rootNodes;
     this.fileListView.ItemsSource = this._fileRows;
 
-    // Enter on the file list opens the selected folder (tunnel so the DataGrid does not swallow the key)
+    // Enter on the file list opens a folder / extracts a file (tunnel so the DataGrid does not swallow the key)
     this.fileListView.AddHandler(KeyDownEvent, this.FileListView_KeyDown, RoutingStrategies.Tunnel);
 
     this.Closed += (_, _) => this.ClosePackage();
@@ -58,22 +58,33 @@ public partial class MainWindow : Window {
   private void FileListView_DoubleTapped(object? sender, TappedEventArgs e) {
     // Ignore double-clicks on the column headers
     if (e.Source is Control c && c.FindLogicalAncestorOfType<DataGridColumnHeader>() != null) return;
-    this.OpenSelectedFolder();
+    this.ActivateSelectedRow();
   }
 
   private void FileListView_KeyDown(object? sender, KeyEventArgs e) {
-    if (e.Key != Key.Enter) return;
-    if (this.fileListView.SelectedItem is not FileRow { IsDirectory: true }) return;
-    this.OpenSelectedFolder();
+    if (e.Key != Key.Enter || this.fileListView.SelectedItem is not FileRow) return;
+    this.ActivateSelectedRow();
     e.Handled = true;
+  }
+
+  /// <summary>
+  /// Double-click / Enter on a row: opens a folder, or extracts a file
+  /// </summary>
+  private void ActivateSelectedRow() {
+    if (this._extractCts != null) return;
+    if (this.fileListView.SelectedItem is not FileRow row) return;
+
+    if (row.IsDirectory) {
+      this.OpenFolder(row);
+    } else {
+      _ = this.ExtractRowAsync(row);
+    }
   }
 
   /// <summary>
   /// When a folder is opened in the file list, selects the same folder in the tree and shows its contents
   /// </summary>
-  private void OpenSelectedFolder() {
-    if (this.fileListView.SelectedItem is not FileRow { IsDirectory: true } row) return;
-
+  private void OpenFolder(FileRow row) {
     var dir = row.Entry.Name.Replace('\\', '/').Trim('/');
     if (!this._folderNodes.TryGetValue(dir, out var node)) return;
 
@@ -104,8 +115,16 @@ public partial class MainWindow : Window {
   /// Extracts the item right-clicked in the file list
   /// </summary>
   private async void ExtractMenuItem_Click(object? sender, RoutedEventArgs e) {
+    if (this.fileListView.SelectedItem is not FileRow row) return;
+    await this.ExtractRowAsync(row);
+  }
+
+  /// <summary>
+  /// Asks for the destination and extracts a single file or folder row
+  /// </summary>
+  private async Task ExtractRowAsync(FileRow row) {
     try {
-      if (this._package == null || this.fileListView.SelectedItem is not FileRow row) return;
+      if (this._package == null || this._extractCts != null) return;
       var item = row.Entry;
       var unpacker = new Unpacker(this._package);
 

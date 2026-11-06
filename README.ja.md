@@ -19,6 +19,7 @@ UI は [Avalonia UI](https://avaloniaui.net/)（ダークテーマ）で作ら�
   - Name / Size / Type / Offset / Flag を一覧表示
   - ファイルの種類に応じたアイコン表示
   - フォルダのダブルクリック（または Enter）でその階層へ移動
+  - ファイルのダブルクリック（または Enter）でそのファイルを抽出
 - PKG 全体の抽出（`Tools → Extraction`）
 - ファイル一覧の右クリックから、ファイル／フォルダ単体の抽出
 - 抽出中の進捗をステータスバーに表示

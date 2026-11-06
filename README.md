@@ -19,6 +19,7 @@ The UI is built with [Avalonia UI](https://avaloniaui.net/) (dark theme).
   - Shows Name / Size / Type / Offset / Flag
   - Icons based on the file type
   - Double-click (or press Enter on) a folder to open it
+  - Double-click (or press Enter on) a file to extract it
 - Extract the whole PKG (`Tools → Extraction`)
 - Extract a single file or folder from the file list's context menu
 - Extraction progress is shown in the status bar
