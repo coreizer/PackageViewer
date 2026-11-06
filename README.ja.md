@@ -4,7 +4,8 @@ A PS3 Package Viewer and Extraction
 
 [English](README.md) | **日本語**
 
-PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う Windows 用ツールです。
+PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行うデスクトップツールです。
+UI は [Avalonia UI](https://avaloniaui.net/)（ダークテーマ）で作られています。
 
 ![PS3 Package Viewer](docs/main.png)
 
@@ -21,6 +22,7 @@ PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う W
 - PKG 全体の抽出（`Tools → Extraction`）
 - ファイル一覧の右クリックから、ファイル／フォルダ単体の抽出
 - 抽出中の進捗をステータスバーに表示
+- コマンドライン引数に `.pkg` のパスを渡す（または実行ファイルにドロップする）と起動時に開く
 
 ### 対応している PKG
 
@@ -32,14 +34,20 @@ PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う W
 
 ## 動作環境
 
-- Windows 10 / 11
-- [.NET 10](https://dotnet.microsoft.com/)（Windows Desktop Runtime）
+- Windows 10 / 11（Avalonia は Linux / macOS でも動作しますが、動作確認は Windows のみ）
+- [.NET 10](https://dotnet.microsoft.com/) ランタイム
 
 ## ビルド
 
 1. Visual Studio で `PackageViewer.slnx` を開く
 2. NuGet パッケージを復元する（ビルド時に自動で復元されます）
 3. ビルドして実行する
+
+コマンドラインからの場合:
+
+```sh
+dotnet run --project src/PackageViewer
+```
 
 ## プロジェクト構成
 
@@ -49,6 +57,11 @@ PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う W
 ├── src/
 │   └── PackageViewer/
 │       ├── PackageViewer.csproj
+│       ├── Program.cs              … エントリポイント（Avalonia のアプリビルダー）
+│       ├── App.axaml               … アプリケーション（Fluent ダークテーマ、共通スタイル）
+│       ├── Assets/
+│       │   ├── appicon.ico
+│       │   └── Icons/              … Avalonia リソースとして埋め込む PNG アイコン
 │       ├── Extensions/
 │       │   └── StreamExtensions.cs … ビッグエンディアンの読み書き（Stream 拡張メソッド）
 │       ├── IO/
@@ -59,12 +72,18 @@ PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う W
 │       │   ├── PackageHeader.cs    … PKG ヘッダー（0xC0 バイト）の読み書き
 │       │   └── Unpacker.cs         … ディスクへの抽出
 │       ├── Package.cs              … 解読したパッケージの情報
-│       ├── RuntimeHelpers.cs       … アプリ全体で使う補助（アプリ名、エラーダイアログ）
-│       ├── frmMain.cs              … メイン画面
-│       └── frmAbout.cs             … バージョン情報
+│       ├── RuntimeHelpers.cs       … アプリ全体で使う補助（アプリ名、バージョン、ダイアログ）
+│       ├── Models/
+│       │   ├── FolderNode.cs       … フォルダツリーの 1 ノード
+│       │   ├── FileRow.cs          … ファイル一覧の 1 行
+│       │   └── Icons.cs            … アイコンの読み込み・キャッシュ
+│       └── Views/
+│           ├── MainWindow.axaml    … メイン画面
+│           ├── AboutWindow.axaml   … バージョン情報
+│           └── MessageDialog.axaml … 情報／エラーダイアログ
 ├── resources/
 │   ├── appicon.ico
-│   └── icon/                       … ファイル一覧のアイコン
+│   └── icon/                       … 元の ICO アイコン（Assets/Icons に PNG 化して同梱）
 └── docs/
     └── main.png                    … スクリーンショット
 ```
@@ -91,6 +110,8 @@ PS3 の PKG ファイルを開いて、中身の一覧表示と抽出を行う W
 
 - **[PS3 Developer Wiki](https://www.psdevwiki.com/ps3/)**
   - [PKG files](https://www.psdevwiki.com/ps3/PKG_files) — PKG のヘッダー、アイテムレコード、メタデータ、暗号化方式の仕様
+- **[Avalonia UI](https://avaloniaui.net/)** — MIT License
+  - クロスプラットフォーム UI フレームワーク（Fluent テーマ、DataGrid）
 - **[ByteSize](https://github.com/omar/ByteSize)**（ByteSizeLib） by Omar Khudeira — MIT License
   - ファイルサイズの表示に使用
 

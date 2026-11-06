@@ -1,4 +1,7 @@
-﻿namespace PackageViewer;
+﻿using Avalonia.Controls;
+using PackageViewer.Views;
+
+namespace PackageViewer;
 
 /// <summary>
 /// Application-wide helpers
@@ -12,29 +15,29 @@ public static class RuntimeHelpers {
   }
 
   /// <summary>
-  /// Shows an error message with TaskDialog (exception details are shown in the expander)
+  /// Application version shown in the title bar and the About dialog
   /// </summary>
-  /// <param name="owner">Owner window (shown without an owner if null)</param>
+  public static string Version {
+    get => "1.0.0";
+  }
+
+  /// <summary>
+  /// Shows an error message (exception details are shown in the expander)
+  /// </summary>
+  /// <param name="owner">Owner window</param>
   /// <param name="heading">Heading text</param>
   /// <param name="ex">Exception to display</param>
-  public static void ShowError(IWin32Window? owner, string heading, Exception ex) {
-    var page = new TaskDialogPage() {
-      Caption = ApplicationName,
-      Heading = heading,
-      Text = ex.Message,
-      Icon = TaskDialogIcon.Error,
-      Buttons = { TaskDialogButton.OK },
-      Expander = new TaskDialogExpander() {
-        Text = ex.ToString(),
-        CollapsedButtonText = "Show details",
-        ExpandedButtonText = "Hide details",
-      },
-    };
+  public static Task ShowErrorAsync(Window owner, string heading, Exception ex) {
+    return MessageDialog.ShowAsync(owner, heading, ex.Message, MessageDialogIcon.Error, ex.ToString());
+  }
 
-    if (owner != null) {
-      TaskDialog.ShowDialog(owner, page);
-    } else {
-      TaskDialog.ShowDialog(page);
-    }
+  /// <summary>
+  /// Shows an information message
+  /// </summary>
+  /// <param name="owner">Owner window</param>
+  /// <param name="heading">Heading text</param>
+  /// <param name="text">Message text</param>
+  public static Task ShowInformationAsync(Window owner, string heading, string text) {
+    return MessageDialog.ShowAsync(owner, heading, text, MessageDialogIcon.Information);
   }
 }
